@@ -1,0 +1,13 @@
+{% extends 'base.html' %} {% block content %}
+<h1>Comprar {{ livro.titulo }}</h1>
+<p>Autor: {{ livro.autor }}</p>
+<p>Preço: R$ {{ livro.preco }}</p>
+<form action="{{ url_for('main.processar_pagamento', livro_id=livro.id) }}" method="POST">
+    <label for="forma_pagamento">Forma de Pagamento:</label>
+    <select name="forma_pagamento" id="forma_pagamento">
+        <option value="pix">PIX</option>
+        <option value="cartao">Cartão de Crédito</option>
+    </select>
+    <button type="submit">Finalizar Compra</button>
+</form>
+{% endblock %}

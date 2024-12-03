@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if 'logged_in' not in session %}
+<div style="background-image: url('{{ url_for('static', filename='imagens/biblioteca.jpg') }}'); background-size: cover; min-height: 100vh; display: flex; justify-content: center; align-items: center;">
+    <div style="background-color: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 5px;">
+        <h1>Bem-vindo à Biblioteca!</h1>
+        <form method="post">
+            <label for="nome">Nome:</label><br>
+            <input type="text" id="nome" name="nome" required><br><br>
+
+            <label for="sobrenome">Sobrenome:</label><br>
+            <input type="text" id="sobrenome" name="sobrenome" required><br><br>
+
+            <label for="email">Email:</label><br>
+            <input type="email" id="email" name="email" required><br><br>
+
+            <label for="cpf">CPF:</label><br>
+            <input type="text" id="cpf" name="cpf" required><br><br>
+
+            <label for="idade">Idade:</label><br>
+            <input type="number" id="idade" name="idade" required><br><br>
+
+            <input type="submit" value="Cadastrar">
+        </form>
+
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class=flashes>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+
+    </div>
+</div>
+{% endif %}
+
+
+
+<h2>Reservas:</h2>
+<ul>
+    {% for reserva in reservas %}
+    {% if reserva.usuario_id == current_user.id %}
+    <li>{{ reserva.livro.titulo }} ({{ reserva.data_reserva.strftime('%d/%m/%Y') }})</li>
+    {% endif %}
+    {% endfor %}
+</ul>
+
+{% if current_user.reservas_usuarios %}
+<form action="{{ url_for('main.finalizar_reserva') }}" method="get">
+    <button type="submit">Finalizar Reserva</button>
+</form>
+{% endif %}
+
+<h2>Livros Disponíveis</h2>
+<ul>
+    {% for livro in livros %}
+    <li>
+        <a href="{{ url_for('main.livro', livro_id=livro.id) }}">{{ livro.titulo }}</a> por {{ livro.autor }} - R$ {{ livro.preco }}
+
+        <form action="{{ url_for('main.reserva', livro_id=livro.id) }}" method="post" style="display: inline;">
+            <input type="hidden" name="livro_id" value="{{ livro.id }}">
+            <button type="submit">Reservar</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}
